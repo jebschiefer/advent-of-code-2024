@@ -29,3 +29,21 @@ func ReadFileToLines(path string) []string {
 	content := ReadFile(path)
 	return GetLines(content)
 }
+
+func AbsoluteValue(x int) int {
+	if x < 0 {
+		return 0 - x
+	}
+
+	return x
+}
+
+func Sum(values []int) int {
+	sum := 0
+
+	for _, value := range values {
+		sum += value
+	}
+
+	return sum
+}
