@@ -2,6 +2,7 @@ package utils
 
 import (
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -46,4 +47,19 @@ func Sum(values []int) int {
 	}
 
 	return sum
+}
+
+func StringToInts(value string) []int {
+	numbers := []int{}
+	values := strings.Split(value, " ")
+
+	for _, num := range values {
+		number, err := strconv.Atoi(num)
+
+		if err == nil {
+			numbers = append(numbers, number)
+		}
+	}
+
+	return numbers
 }

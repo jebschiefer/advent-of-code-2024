@@ -15,3 +15,12 @@ func TestGetLines(t *testing.T) {
 
 	testing_utils.DeepCompareStrings(t, got, want)
 }
+
+func TestStringToInts(t *testing.T) {
+	input := "1 2 3 4"
+
+	got := StringToInts(input)
+	want := []int{1, 2, 3, 4}
+
+	testing_utils.DeepCompareInts(t, got, want)
+}
