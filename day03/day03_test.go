@@ -9,7 +9,7 @@ import (
 func TestDay02Part1Sample(t *testing.T) {
 	input := utils.ReadFile("../inputs/day03_sample.txt")
 
-	got := Day03(input)
+	got := Day03Part1(input)
 	want := 161
 
 	testing_utils.CompareInts(t, got, want)
@@ -18,8 +18,26 @@ func TestDay02Part1Sample(t *testing.T) {
 func TestDay02Part1(t *testing.T) {
 	input := utils.ReadFile("../inputs/day03.txt")
 
-	got := Day03(input)
+	got := Day03Part1(input)
 	want := 166357705
+
+	testing_utils.CompareInts(t, got, want)
+}
+
+func TestDay02Part2Sample(t *testing.T) {
+	input := utils.ReadFile("../inputs/day03_sample.txt")
+
+	got := Day03Part2(input)
+	want := 48
+
+	testing_utils.CompareInts(t, got, want)
+}
+
+func TestDay02Part2(t *testing.T) {
+	input := utils.ReadFile("../inputs/day03.txt")
+
+	got := Day03Part2(input)
+	want := 88811886
 
 	testing_utils.CompareInts(t, got, want)
 }
