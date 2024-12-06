@@ -22,11 +22,40 @@ var directions = map[string]Direction{
 	"<": west,
 }
 
-func Day06(grid Grid) int {
+func Day06Part1(grid Grid) int {
+	markedGrid := markGrid(grid)
+	return countVisited(markedGrid)
+}
+
+func Day06Part2(grid Grid) int {
+	markedGrid := markGrid(grid)
 	position := getStartingposition(grid)
+	cycleCount := 0
+
+	for y := range grid {
+		for x := range grid[0] {
+			if grid[y][x] == "." && markedGrid[y][x] == "X" {
+				grid[y][x] = "O"
+
+				if hasCycle(grid, position) {
+					cycleCount++
+				}
+
+				grid[y][x] = "."
+			}
+		}
+
+	}
+
+	return cycleCount
+}
+
+func markGrid(grid Grid) Grid {
+	markedGrid := copyGrid(grid)
+	position := getStartingposition(markedGrid)
 
 	for {
-		done, currentposition := moveAndMark(&grid, position)
+		done, currentposition := moveAndMark(&markedGrid, position)
 		position = currentposition
 
 		if done {
@@ -34,7 +63,7 @@ func Day06(grid Grid) int {
 		}
 	}
 
-	return countVisited(grid)
+	return markedGrid
 }
 
 func moveAndMark(gridPointer *Grid, currentPosition Position) (done bool, position Position) {
@@ -45,7 +74,7 @@ func moveAndMark(gridPointer *Grid, currentPosition Position) (done bool, positi
 	newPosition := currentPosition.move(grid)
 
 	if newPosition.x >= xMin && newPosition.x <= xMax && newPosition.y >= yMin && newPosition.y <= yMax {
-		if grid[newPosition.y][newPosition.x] == "#" {
+		if grid[newPosition.y][newPosition.x] == "#" || grid[newPosition.y][newPosition.x] == "O" {
 			newPosition = currentPosition.rotate()
 		} else {
 			grid[currentPosition.y][currentPosition.x] = "X"
@@ -55,6 +84,8 @@ func moveAndMark(gridPointer *Grid, currentPosition Position) (done bool, positi
 
 		return false, newPosition
 	}
+
+	grid[currentPosition.y][currentPosition.x] = "X"
 
 	return true, defaultPosition
 }
@@ -76,7 +107,7 @@ func getStartingposition(grid Grid) Position {
 }
 
 func countVisited(grid Grid) int {
-	count := 1
+	count := 0
 
 	for y := range grid {
 		for x := range grid[y] {
@@ -87,4 +118,46 @@ func countVisited(grid Grid) int {
 	}
 
 	return count
+}
+
+func isCycle(seenPositions []Position, position Position) bool {
+	for _, seen := range seenPositions {
+		if seen.equals(position) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func hasCycle(grid Grid, position Position) bool {
+	grid = copyGrid(grid)
+	seenPositions := []Position{}
+
+	for {
+		if isCycle(seenPositions, position) {
+			return true
+		}
+
+		seenPositions = append(seenPositions, position)
+
+		done, currentposition := moveAndMark(&grid, position)
+		position = currentposition
+
+		if done {
+			return false
+		}
+	}
+}
+
+func copyGrid(grid Grid) Grid {
+	copy := Grid{}
+
+	for y := range grid {
+		row := []string{}
+		row = append(row, grid[y]...)
+		copy = append(copy, row)
+	}
+
+	return copy
 }
