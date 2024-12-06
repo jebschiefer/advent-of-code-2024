@@ -31,6 +31,27 @@ func ReadFileToLines(path string) []string {
 	return GetLines(content)
 }
 
+func ReadFileToGrid(path string) [][]string {
+	lines := ReadFileToLines(path)
+	return LinesToGrid(lines)
+}
+
+func LinesToGrid(lines []string) [][]string {
+	grid := [][]string{}
+
+	for _, line := range lines {
+		row := []string{}
+
+		for _, char := range line {
+			row = append(row, string(char))
+		}
+
+		grid = append(grid, row)
+	}
+
+	return grid
+}
+
 func AbsoluteValue(x int) int {
 	if x < 0 {
 		return 0 - x
