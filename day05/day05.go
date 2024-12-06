@@ -3,22 +3,36 @@ package day05
 import (
 	"aoc2024/utils"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 )
 
 type Rules = map[int][]int
 type Updates = [][]int
+type PartFunc = func(rules Rules, updates Updates) Updates
 
-func Day05(input string) int {
+func Day05(input string, part PartFunc) int {
 	parts := strings.Split(input, "\n\n")
 
 	rules := getRules(parts[0])
 	updates := getUpdates(parts[1])
-	inOrderUpdates := findInOrderUpdates(rules, updates)
-	middlePages := getMiddlePages(inOrderUpdates)
+	updatesPart := part(rules, updates)
+	middlePages := getMiddlePages(updatesPart)
 
 	return utils.Sum(middlePages)
+}
+
+func Part1(rules Rules, updates Updates) Updates {
+	inOrderUpdates, _ := categorizeUpdates(rules, updates)
+	return inOrderUpdates
+}
+
+func Part2(rules Rules, updates Updates) Updates {
+	_, wrongOrderUpdates := categorizeUpdates(rules, updates)
+	wrongOrderUpdates = sortUpdates(rules, wrongOrderUpdates)
+
+	return wrongOrderUpdates
 }
 
 func getRules(input string) Rules {
@@ -63,8 +77,9 @@ func getUpdates(input string) Updates {
 	return updates
 }
 
-func findInOrderUpdates(rules Rules, updates Updates) Updates {
+func categorizeUpdates(rules Rules, updates Updates) (Updates, Updates) {
 	inOrderUpdates := Updates{}
+	wrongOrderUpdates := Updates{}
 
 	for _, pages := range updates {
 		inOrder := true
@@ -96,10 +111,12 @@ func findInOrderUpdates(rules Rules, updates Updates) Updates {
 
 		if inOrder {
 			inOrderUpdates = append(inOrderUpdates, pages)
+		} else {
+			wrongOrderUpdates = append(wrongOrderUpdates, pages)
 		}
 	}
 
-	return inOrderUpdates
+	return inOrderUpdates, wrongOrderUpdates
 }
 
 func getMiddlePages(updates Updates) []int {
@@ -111,4 +128,29 @@ func getMiddlePages(updates Updates) []int {
 	}
 
 	return middlePages
+}
+
+func sortUpdates(rules Rules, updates Updates) Updates {
+	sorted := Updates{}
+
+	for _, pages := range updates {
+		sort.Slice(pages, func(i, j int) bool {
+			found := false
+			rule, ok := rules[pages[i]]
+
+			if ok {
+				for _, r := range rule {
+					if r == pages[j] {
+						found = true
+					}
+				}
+			}
+
+			return found
+		})
+
+		sorted = append(sorted, pages)
+	}
+
+	return sorted
 }
