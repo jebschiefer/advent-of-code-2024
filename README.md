@@ -11,3 +11,11 @@ $ go test ./...
 ```bash
 $ go test ./day01
 ```
+
+## Scaffold files for new day
+
+Replace day01 with current day.
+
+```bash
+$ ./scaffold_day day01
+```

@@ -1,0 +1,45 @@
+#!/bin/bash
+
+day=$1
+
+if [[ -z "$day" ]]; then
+   echo "Please provide a day."
+   exit 1
+fi
+
+dayUpper=$(echo $day | awk '{print toupper(substr($0,0,1))tolower(substr($0,2))}')
+
+echo "Create $day directory"
+mkdir "$day"
+
+echo "Create $day/$day.go"
+echo "package $day
+
+func $dayUpper(input string) int {
+    return 0
+}" > "$day/$day.go"
+
+echo "Create $day/${day}_test.go"
+echo "package $day
+
+import (
+	\"aoc2024/testing_utils\"
+	\"aoc2024/utils\"
+	\"testing\"
+)
+
+func Test${dayUpper}(t *testing.T) {
+    input := utils.ReadFile(\"../inputs/${day}_sample.txt\")
+
+    got := $dayUpper(input)
+    want := 0
+
+    testing_utils.CompareInts(t, got, want)
+}" > "$day/${day}_test.go"
+
+echo "Create empty input files"
+touch "inputs/$day.txt"
+touch "inputs/${day}_sample.txt"
+
+echo "Run test for day"
+go test ./$day
